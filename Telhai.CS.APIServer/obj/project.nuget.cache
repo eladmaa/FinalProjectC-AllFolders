@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "LDFMeUnk2ezLmFDLFcckonVH9qzPEJBwohn4FpbowKzk1xOV5XKfw/fNMX1VohNv1OkGWk7u54DNBwNVOS7HIA==",
+  "dgSpecHash": "tZ7I7eU8b0jhhqxm2QanrvN9qKDeuHYSmgmnF74gJPkqx3u/he0gnm8BEqlhrtAyTLiHWe3UzkdHyNSkL8cMWA==",
   "success": true,
-  "projectFilePath": "C:\\Users\\eladm\\source\\repos\\Telhai.CS.APIServer\\Telhai.CS.APIServer.csproj",
+  "projectFilePath": "C:\\Users\\eladm\\Source\\Repos\\FinalProjectC-Client-Server\\Telhai.CS.APIServer\\Telhai.CS.APIServer.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\eladm\\.nuget\\packages\\azure.core\\1.24.0\\azure.core.1.24.0.nupkg.sha512",
     "C:\\Users\\eladm\\.nuget\\packages\\azure.identity\\1.6.0\\azure.identity.1.6.0.nupkg.sha512",

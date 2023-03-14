@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\eladm\\source\\repos\\Telhai.CS.APIServer\\Telhai.CS.APIServer.csproj": {}
+    "C:\\Users\\eladm\\Source\\Repos\\FinalProjectC-Client-Server\\Telhai.CS.APIServer\\Telhai.CS.APIServer.csproj": {}
   },
   "projects": {
-    "C:\\Users\\eladm\\source\\repos\\Telhai.CS.APIServer\\Telhai.CS.APIServer.csproj": {
+    "C:\\Users\\eladm\\Source\\Repos\\FinalProjectC-Client-Server\\Telhai.CS.APIServer\\Telhai.CS.APIServer.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\eladm\\source\\repos\\Telhai.CS.APIServer\\Telhai.CS.APIServer.csproj",
+        "projectUniqueName": "C:\\Users\\eladm\\Source\\Repos\\FinalProjectC-Client-Server\\Telhai.CS.APIServer\\Telhai.CS.APIServer.csproj",
         "projectName": "Telhai.CS.APIServer",
-        "projectPath": "C:\\Users\\eladm\\source\\repos\\Telhai.CS.APIServer\\Telhai.CS.APIServer.csproj",
+        "projectPath": "C:\\Users\\eladm\\Source\\Repos\\FinalProjectC-Client-Server\\Telhai.CS.APIServer\\Telhai.CS.APIServer.csproj",
         "packagesPath": "C:\\Users\\eladm\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\eladm\\source\\repos\\Telhai.CS.APIServer\\obj\\",
+        "outputPath": "C:\\Users\\eladm\\Source\\Repos\\FinalProjectC-Client-Server\\Telhai.CS.APIServer\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
