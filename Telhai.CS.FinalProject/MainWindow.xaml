@@ -1,0 +1,14 @@
+﻿<Window x:Class="Telhai.CS.FinalProject.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Telhai.CS.FinalProject"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <StackPanel Name="stackPanelBtns" Grid.Row="1" Background="LightSkyBlue"  >
+
+        <Button Name="btn1" Margin="8,4,8,8" Content="Teachers App"  FontSize="25" Click="tchr_Click"   />
+        <Button Name="btn2" Margin="8,0,8,8" Content="Students Window" FontSize="25" Click="std_Click"  />
+    </StackPanel>
+</Window>
