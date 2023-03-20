@@ -4,19 +4,12 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
-using System.IO;
-using System.Linq;
+using System.Net.Http;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
+
 using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using System.Xml.Linq;
 using Telhai.CS.APIServer.Models;
 
 namespace Telhai.CS.FinalProject
@@ -31,6 +24,7 @@ namespace Telhai.CS.FinalProject
         static int id = 0;
         static int Qid = 0;
         bool isNew = false;
+        Exam exam;
         private ObservableCollection<Exam> exams = new ObservableCollection<Exam>();
         private ObservableCollection<Question> questionsList = new ObservableCollection<Question>();
         private ObservableCollection<String> answersList = new ObservableCollection<String>();
@@ -44,18 +38,20 @@ namespace Telhai.CS.FinalProject
             exame_Datepicker.SelectedDate = DateTime.Now;
             time_begining.Text = DateTime.Now.ToString("HH:mm");
         }
-     
+        //****************************************************************************************************
+
         private async void btn_AddExam_Click(object sender, RoutedEventArgs e)
         {
             id++;
             string idCounter = id.ToString();
-            Exam s = new Exam ("Name_" + idCounter );
+            Exam s = new Exam("Name_" + idCounter);
             await HttpExamRepository.Instance.AddExamAsync(s);
             //Reload
             List<Exam> list = await HttpExamRepository.Instance.GetAllExamsAsync();
             examsList.ItemsSource = list;
             isNew = true;
         }
+        //****************************************************************************************************
 
         private void Window_Loaded_1(object sender, RoutedEventArgs e)
         {
@@ -67,7 +63,7 @@ namespace Telhai.CS.FinalProject
             time_duration.SelectedIndex = 0;
         }
 
-       
+        //****************************************************************************************************
 
         private void AddAnswer_btn_Click(object sender, RoutedEventArgs e)
         {
@@ -82,12 +78,14 @@ namespace Telhai.CS.FinalProject
             }
 
         }
+        //****************************************************************************************************
 
 
         public /* List<Exam> */ void allExams()
         {
-          //  throw new NotImplementedException();
+            //  throw new NotImplementedException();
         }
+        //****************************************************************************************************
 
         private void btnLoadPhoto_Click(object sender, RoutedEventArgs e)
         {
@@ -102,12 +100,15 @@ namespace Telhai.CS.FinalProject
                 this.QuestionImage.Source = new BitmapImage(new Uri(openFileDialog.FileName));
             }
         }
+        //****************************************************************************************************
+
         public bool IsTimeValid(string timeStr)
         {
             DateTime time;
             return DateTime.TryParseExact(timeStr, "HH:mm", CultureInfo.InvariantCulture, DateTimeStyles.None, out time);
         }
 
+        //****************************************************************************************************
 
         public void setTime(ref DateTime dateTime, string timeString)
         {
@@ -117,6 +118,7 @@ namespace Telhai.CS.FinalProject
             // set the time component of the existing dateTime object to the new time
             dateTime = dateTime.Date + timeSpan;
         }
+        //****************************************************************************************************
 
         private void examsList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -127,21 +129,92 @@ namespace Telhai.CS.FinalProject
                 this.txtTeacher.Text = ex.TeacherName;
                 this.exame_Datepicker.SelectedDate = ex.date;
                 this.time_begining.Text = ex.BeginTime.ToString("HH:mm");
+                this.isNew = false;
+
+                QuestionsLB.Items.Clear();
+                foreach (var question in ex.questions)
+                {
+                    QuestionsLB.Items.Add(question);
+                }
+            }
+        }
+        //****************************************************************************************************
+
+        private void btn_RemoveExam_Click(object sender, RoutedEventArgs e)
+        {
+            if (examsList.SelectedItem != null)
+            {
+                Exam exam = examsList.SelectedItem as Exam;
+                //Delete the exam from the detabase
+
+                var response = HttpExamRepository.Instance.RemoveExam(exam).Result;
+                if (response.IsSuccessStatusCode)
+                {
+                    MessageBox.Show("The Exam: " + exam.examName + "was deleted successfuly");
+                    exams.Remove(exam);
+                    //SeachBTN_Click(sender, e);
+                }
+                else
+                    MessageBox.Show("Error");
             }
         }
 
-        private async void btn_RemoveExam_Click(object sender, RoutedEventArgs e)
+        private Exam GetExam()
         {
-            if (this.examsList.SelectedItem is Exam ex)
-            {
-                await HttpExamRepository.Instance.RemoveExam(ex);
-            }
+            return exam;
         }
+
+        //****************************************************************************************************
 
         private void submit_Exam_Click(object sender, RoutedEventArgs e)
         {
-            
+            // List<Question> questions = new List<Question>();
+            foreach (var question in QuestionsLB.Items)
+            {
+                Question q = question as Question;
+                exam.questions.Add(q);
+            }
+            exam.date = (DateTime)exame_Datepicker.SelectedDate;
+            exam.TeacherName = this.txtTeacher.Text;
+            exam.examName = this.txtExame.Text;
+            DateTime tempExamBeginTime = exame_Datepicker.SelectedDate.Value;
+            setTime(ref tempExamBeginTime, this.time_begining.Text);
+
+            exam.BeginTime = int.Parse(time_begining.Text);
+            exam.duration = this.time_duration.SelectedIndex;
+            exam.isRandom = this.IsRandomCB.IsChecked.Value;
+            exam.id = this.txtID.Text;
+
+            if (isNew)
+            {
+                var response = HttpExamRepository.Instance.AddExamAsync(exam).Result;
+                if (response.StatusCode == System.Net.HttpStatusCode.Created)
+                {
+                    MessageBox.Show($" Exam - {exam.examName} has been Created successfuly");
+                    Close();
+                }
+                else
+                {
+                    string returnValue = response.Content.ReadAsStringAsync().Result;
+                    MessageBox.Show($"Failed to POST data: ({response.StatusCode}): {returnValue}");
+                }
+            }
+            else
+            {
+                var response = HttpExamRepository.Instance.UpdateExamAsync(exam.id, exam).Result;
+                if (response.StatusCode == System.Net.HttpStatusCode.Created)
+                {
+                    MessageBox.Show($" Exam - {exam.examName} has been Created successfuly");
+                    Close();
+                }
+                else
+                {
+                    string returnValue = response.Content.ReadAsStringAsync().Result;
+                    MessageBox.Show($"Failed to POST data: ({response.StatusCode}): {returnValue}");
+                }
+            }
         }
+        //****************************************************************************************************
 
         private void time_begining_TextChanged(object sender, TextChangedEventArgs e)
         {
@@ -151,9 +224,9 @@ namespace Telhai.CS.FinalProject
                 return;
             }
             DateTime time = exame_Datepicker.SelectedDate.Value;
-
             setTime(ref time, exame_Datepicker.Text);
         }
+        //****************************************************************************************************
 
         private void QuestionsLB_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -180,5 +253,13 @@ namespace Telhai.CS.FinalProject
 
             }
         }
+
+        private void time_begining_TextChanged_1(object sender, TextChangedEventArgs e)
+        {
+
+        }
+
+        //****************************************************************************************************
+
     }
 }

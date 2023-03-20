@@ -52,12 +52,12 @@
 
                 <StackPanel Grid.Row="3" Grid.ColumnSpan="3" Orientation="Horizontal">
                     <Label FontSize="16"  Name="lblBegin_time" Content="Begin time" Width="120"/>
-                    <TextBox Background="AliceBlue" Name="time_begining" Width="160" />
+                    <TextBox Background="AliceBlue" Name="time_begining" Width="160" TextChanged="time_begining_TextChanged_1" />
 
                     <Label FontSize="16" Name="Duration" Content="duration"/>
                     <ComboBox Background="AliceBlue" Name="time_duration"   Width="auto" />
                     <Label FontSize="16" Name="lbl_random" Content="random apearance?"/>
-                    <CheckBox x:Name="checkBox" Content="CheckBox" />
+                    <CheckBox x:Name="IsRandomCB" Content="" />
 
                 </StackPanel>
 
@@ -109,8 +109,8 @@
                             <Image Name="QuestionImage" Grid.Row="0" />
                             <Button Content="submit Exam" Background="Green" Name="submit_Exam" Grid.Row="1" Click="submit_Exam_Click"/>
                         </Grid>
-                        
-                       
+
+
                         <Grid Grid.Column="0" Grid.ColumnSpan="2" >
                             <Grid.RowDefinitions>
                                 <RowDefinition x:Name="AddAnswer" Height="auto"/>

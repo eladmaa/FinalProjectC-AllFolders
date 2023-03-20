@@ -16,9 +16,9 @@ namespace Telhai.CS.APIServer.Controllers
     [ApiController]
     public class ExamsController : ControllerBase
     {
-        private  ExamDbContext _context;
+        private ExamDbContext _context;
 
-      //  private IExamRepository repo;
+        //  private IExamRepository repo;
         public ExamsController(ExamDbContext context)
         {
             _context = context;
@@ -137,7 +137,7 @@ namespace Telhai.CS.APIServer.Controllers
 
         private bool ExamExists(string id)
         {
-            return _context.Exams.Any(e => e.id == id);
+            return ((bool)(_context.Exams?.Any(e => e.id.Equals(id))).GetValueOrDefault());
         }
     }
 }
