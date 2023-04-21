@@ -1,50 +1,70 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
+using System;
+using System.ComponentModel.DataAnnotations;
 
-namespace Telhai.CS.FinalProject
+namespace Telhai.CS.APIServer.Models
 {
     public class Exam
     {
+
+        // ID, name, content
         public string examName { get; set; }
-       
+        [Key]
         public string id { get; set; }
-      
+
         public DateTime date { get; set; }
-       
         public string TeacherName { get; set; }
-       
-        public int BeginTime { get; set; }  // minutes in the day when exam begins 10:00 => 600, range 0 - 1439
-       
-        public float duration { get; set; } // duration in hours
-       
+        public DateTime BeginTime { get; set; }
+        public float duration { get; set; }
         public bool isRandom { get; set; }
         public List<Question> questions { get; set; }
 
-        public Exam(string exName)
+        public Exam(string exName, string id)
         {
             this.examName = exName;
+            this.id = id;
+            //  this.id = Guid.NewGuid().ToString();
+        }
+
+        public Exam()
+        {
+            examName = "";
             this.id = Guid.NewGuid().ToString();
         }
-        [JsonConstructorAttribute]
-        public Exam(string name, string teacher_name, DateTime dateTime, int when, int howLong, bool isRan, List<Question> questions)
-        {
-            questions = new List<Question>();
-            this.examName = name;
-            this.id = Guid.NewGuid().ToString();
-            this.date = dateTime;
-            this.TeacherName = teacher_name;
-            this.isRandom = isRan;
-            this.BeginTime = when;
-            this.duration = howLong;
-            foreach (Question question in questions)
-            {
-                this.questions.Add(question);
-            }
-            
 
+        public Exam(string examName, string id, DateTime date, string teacherName, DateTime beginTime, float duration, bool isRandom, List<Question> questions) : this(examName, id)
+        {
+            this.date = date;
+            TeacherName = teacherName;
+            BeginTime = beginTime;
+            this.duration = duration;
+            this.isRandom = isRandom;
+            this.questions = questions;
         }
     }
+
+    public class Question
+    {
+        public string content { get; set; }
+        public int correct { get; set; }
+        List<string> answers;
+        private Guid _id;
+        [Key]
+        public Guid ID
+        {
+            get { return _id; }
+            set { _id = value; }
+        }
+        public Question()
+        {
+            answers = new List<string>();
+        }
+        public void add(string answer)
+        {
+            answers.Add(answer);
+        }
+    }
+
+
 }

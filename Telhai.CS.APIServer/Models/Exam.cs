@@ -5,6 +5,8 @@ namespace Telhai.CS.APIServer.Models
 {
     public class Exam
     {
+
+        // ID, name, content
         public string examName { get; set; }
         [Key]
         public string id { get; set; }
@@ -27,6 +29,16 @@ namespace Telhai.CS.APIServer.Models
         {
             examName = "";
             this.id = Guid.NewGuid().ToString();
+        }
+
+        public Exam(string examName, string id, DateTime date, string teacherName, DateTime beginTime, float duration, bool isRandom, List<Question> questions) : this(examName, id)
+        {
+            this.date = date;
+            TeacherName = teacherName;
+            BeginTime = beginTime;
+            this.duration = duration;
+            this.isRandom = isRandom;
+            this.questions = questions;
         }
     }
 

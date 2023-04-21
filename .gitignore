@@ -1,0 +1,8 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/Telhai.CS.APIServer/obj/Debug/net6.0/Telhai.CS.APIServer.dll
+/Telhai.CS.APIServer/obj/Debug/net6.0/Telhai.CS.APIServer.pdb
+/Telhai.CS.APIServer/bin/Debug/net6.0/Telhai.CS.APIServer.dll
+/Telhai.CS.APIServer/bin/Debug/net6.0/Telhai.CS.APIServer.pdb

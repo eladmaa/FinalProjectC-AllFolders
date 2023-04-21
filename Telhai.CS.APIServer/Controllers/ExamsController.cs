@@ -41,7 +41,7 @@ namespace Telhai.CS.APIServer.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Exam>>> GetExams()
         {
-            return await _context.Exams.ToListAsync();
+            return await _context.Exams.Include("questions").ToListAsync();
         }
 
         // GET: api/Exams1/5
