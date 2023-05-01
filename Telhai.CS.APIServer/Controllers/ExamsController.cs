@@ -1,14 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Xml;
+using System.Xml.Linq;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.VisualBasic.Syntax;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using MongoDB.Driver;
 using Telhai.CS.APIServer.Models;
 using Telhai.CS.FinalProject;
+
 
 namespace Telhai.CS.APIServer.Controllers
 {
@@ -16,13 +21,17 @@ namespace Telhai.CS.APIServer.Controllers
     [ApiController]
     public class ExamsController : ControllerBase
     {
-        private ExamDbContext _context;
+        public static readonly string serverConnectionString = "mongodb://localhost:27017";
+        public static readonly string dbName = "server-client";
+        public static readonly string eCollName = "exams";
+
+        //private ExamDbContext _context;
 
         //  private IExamRepository repo;
-        public ExamsController(ExamDbContext context)
+        public ExamsController()
         {
-            _context = context;
-            var count = (from a in _context.Exams.AsEnumerable() select a).Count();
+            //_context = context;
+            //var count = (from a in _context.Exams.AsEnumerable() select a).Count();
             /*
             if (count == 0)
             {
@@ -39,23 +48,26 @@ namespace Telhai.CS.APIServer.Controllers
 
         // GET: api/Exams1
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Exam>>> GetExams()
+        public List<Exam> GetExams()
         {
-            return await _context.Exams.Include("questions").ToListAsync();
+            var client = new MongoClient(serverConnectionString);
+            var database = client.GetDatabase(dbName);
+            var collection = database.GetCollection<Exam>(eCollName);
+            return collection.Find(x => true).ToList();
+            //return await _context.Exams.Include("questions").ToListAsync();
+
         }
 
         // GET: api/Exams1/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Exam>> GetExam(string id)
+        public Exam GetExam(string id)
         {
-            var exam = await _context.Exams.FindAsync(id);
 
-            if (exam == null)
-            {
-                return NotFound();
-            }
+            var client = new MongoClient(serverConnectionString);
+            var database = client.GetDatabase(dbName);
+            var collection = database.GetCollection<Exam>(eCollName);
+            return collection.Find(x => x.examId == id).SingleOrDefault();
 
-            return exam;
         }
 
         // PUT: api/Exams1/5
@@ -63,81 +75,45 @@ namespace Telhai.CS.APIServer.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutExam(string id, Exam exam)
         {
-            if (id != exam.id)
-            {
-                return BadRequest();
-            }
+            var client = new MongoClient(serverConnectionString);
+            var database = client.GetDatabase(dbName);
+            var collection = database.GetCollection<Exam>(eCollName);
+            var update = Builders<Exam>.Update.Set("examName", exam);
 
-            _context.Entry(exam).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ExamExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            collection.UpdateOne(x => x.examId == id, update);
 
             return NoContent();
         }
 
         // POST: api/Exams1
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
+        [HttpPost("add")]
         public async Task<ActionResult<Exam>> PostExam(Exam exam)
         {
-            string id = exam.id;
-            if (exam.id == "")
-            {
-                exam.id = Guid.NewGuid().ToString();
-                _context.Exams.Add(exam);
-            }
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException)
-            {
-                if (ExamExists(exam.id))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            var client = new MongoClient(serverConnectionString);
+            var database = client.GetDatabase(dbName);
+            var collection = database.GetCollection<Exam>(eCollName);
 
-            return CreatedAtAction("GetExam", new { id = exam.id }, exam);
+            collection.InsertOne(exam);
+            
+
+            return Ok(collection);
+          //  return CreatedAtAction("GetExam", new { id = exam.id }, exam);
         }
 
         // DELETE: api/Exams1/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteExam(string id)
         {
-            var exam = await _context.Exams.FindAsync(id);
-            if (exam == null)
-            {
-                return NotFound();
-            }
+            var client = new MongoClient(serverConnectionString);
+            var database = client.GetDatabase(dbName);
+            var collection = database.GetCollection<Exam>(eCollName);
 
-            _context.Exams.Remove(exam);
-            await _context.SaveChangesAsync();
+            collection.FindOneAndDelete(x => x.examId == id);
 
             return NoContent();
         }
 
-        private bool ExamExists(string id)
-        {
-            return ((bool)(_context.Exams?.Any(e => e.id.Equals(id))).GetValueOrDefault());
-        }
+        
     }
 }

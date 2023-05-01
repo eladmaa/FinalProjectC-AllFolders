@@ -12,13 +12,14 @@ namespace Telhai.CS.APIServer.Models
 {
     public class HttpExamRepository
     {
-        private List<Exam> examList;
+        public List<Exam> examList;
         HttpClient clientApi;
 
         static private HttpExamRepository _instance = null;
 
         private HttpExamRepository()
         {
+            examList = new List<Exam>();
             clientApi = new HttpClient();
             clientApi.BaseAddress = new Uri("https://localhost:7109");
         }
@@ -55,13 +56,14 @@ namespace Telhai.CS.APIServer.Models
         {
 
             //var options = new JsonSerializerOptions { WriteIndented = true };
-            string jsonExamString = JsonSerializer.Serialize<Exam>(exam);
+            examList.Add(exam);
+            /*string jsonExamString = JsonSerializer.Serialize<Exam>(exam);
 
             var content = new StringContent(jsonExamString, Encoding.UTF8, "application/json");
-            var response = await clientApi.PostAsync("api/exams", content);
+            var response = await clientApi.PostAsync("api/exams", content);*/
 
 
-            return response;
+            return null;
         }
 
         public async Task<HttpResponseMessage> UpdateExamAsync(string id, Exam exam)
@@ -79,7 +81,7 @@ namespace Telhai.CS.APIServer.Models
             string jsonExamString = JsonSerializer.Serialize<Exam>(exam);
             var content = new StringContent(jsonExamString, Encoding.UTF8, "application/json");
 
-            var response = await clientApi.DeleteAsync("api/exams/" + exam.id);
+            var response = await clientApi.DeleteAsync("api/exams/" + exam.examId);
             if (response != null)
             {
                 response.EnsureSuccessStatusCode();

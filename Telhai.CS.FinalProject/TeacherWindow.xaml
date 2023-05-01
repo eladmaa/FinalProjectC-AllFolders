@@ -55,7 +55,7 @@
                     <TextBox Background="AliceBlue" Name="time_begining" Width="160" TextChanged="time_begining_TextChanged_1" />
 
                     <Label FontSize="16" Name="Duration" Content="duration"/>
-                    <ComboBox Background="AliceBlue" Name="time_duration"   Width="auto" />
+                    <ComboBox Background="AliceBlue" Name="time_duration"   Width="auto" SelectionChanged="time_duration_SelectionChanged" />
                     <Label FontSize="16" Name="lbl_random" Content="random apearance?"/>
                     <CheckBox x:Name="IsRandomCB" Content="" />
 
@@ -74,7 +74,7 @@
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="auto"></RowDefinition>
                     </Grid.RowDefinitions>
-                    <Button Grid.Row="0" Background="AliceBlue"  Name="btn_AddQuestion" Content="Add Question" ></Button>
+                    <Button Grid.Row="0" Background="AliceBlue"  Name="btn_AddQuestion" Content="Add Question" Click="btn_AddQuestion_Click" ></Button>
                     <ListBox Grid.Row="1" Name="QuestionsLB" Grid.Column="1" SelectionChanged="QuestionsLB_SelectionChanged" />
                     <Button Grid.Row="2" Background="PaleVioletRed" Name="btn_RemoveQuestion" Content="Remove Question" ></Button>
                 </Grid>
@@ -90,7 +90,7 @@
                     </Grid.RowDefinitions>
                     <Label Grid.Row="0" Name="question_desc" Content="Question area" HorizontalAlignment="Center" Margin="0,0,0,16" Grid.RowSpan="2"/>
                     <TextBox Grid.Row="1" x:Name="textQuestion" TextWrapping="Wrap" Text="write your question here" Margin="0,0,0,30" Grid.RowSpan="2"/>
-                    <DockPanel Grid.Row="2" Margin="0,0,0,237" Grid.RowSpan="2">
+                    <DockPanel Grid.Row="2" Margin="0,0,0,237" Grid.RowSpan="2" Height="25">
                         <Button Name="btnLoadPhoto" Width="78" Content="choose image" Click="btnLoadPhoto_Click"/>
                         <TextBox Name="Path" HorizontalAlignment="Stretch" />
                     </DockPanel>

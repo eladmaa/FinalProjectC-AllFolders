@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "OCbdIAmlILRiuaLHrttYdGc9b0BcyjwVSsh5n38NGW4=",
+  "Source": "Telhai.CS.APIServer",
+  "BasePath": "_content/Telhai.CS.APIServer",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
