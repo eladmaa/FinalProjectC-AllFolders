@@ -27,8 +27,9 @@ namespace Telhai.CS.FinalProject
             get { return _id; }
             set { _id = value; }
         }
-        [JsonPropertyName("QImage")]
-        public byte[] QImage { get; set; }
+   //     [JsonPropertyName("QImage")]
+    //    public byte[] QImage { get; set; }
+
         public Question()
         {
             answers = new List<string>();
@@ -36,6 +37,11 @@ namespace Telhai.CS.FinalProject
         public void add(string answer)
         {
             answers.Add(answer);
+        }
+
+        public int answersCount()
+        {
+            return answers.Count;
         }
     }
 

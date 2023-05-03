@@ -53,16 +53,17 @@ namespace Telhai.CS.FinalProject
         private const float MIN_TEST_DURATION = 1f;
         static int id = 0;
         static int Qid = 0;
+
       //  bool isNew = false;
-        Exam exam;
-        private ObservableCollection<Exam> exams = new ObservableCollection<Exam>();
+        
+        //private List<Exam> exams = new List<Exam>();
         private ObservableCollection<Question> questionsList = new ObservableCollection<Question>();
         private ObservableCollection<String> answersList = new ObservableCollection<String>();
         public TeacherWindow()
         {
             InitializeComponent();
             this.Loaded += Window_Loaded_1;
-            examsList.ItemsSource = exams;
+            examsList.ItemsSource = HttpExamRepository.Instance.examList;
 //            this.QuestionsLB.ItemsSource = questionsList;
             exame_Datepicker.SelectedDate = DateTime.Now;
             time_begining.Text = DateTime.Now.ToString("HH:mm");
@@ -73,12 +74,13 @@ namespace Telhai.CS.FinalProject
         {
             id++;
             string idCounter = id.ToString();
-            exam = new Exam() {examName = "Name_" + idCounter };
+            Exam exam = new Exam() {examName = "Name_" + idCounter };
             await HttpExamRepository.Instance.AddExamAsync(exam);
             //Reload
-          //  List<Exam> list = await 
-            
-        //    isNew = true;
+            //  List<Exam> list = await 
+
+            //    isNew = true;
+            examsList.ItemsSource = HttpExamRepository.Instance.examList;
             examsList.Items.Refresh();
         }
         //****************************************************************************************************
@@ -91,7 +93,18 @@ namespace Telhai.CS.FinalProject
             }
             time_duration.Items.Insert(0, "Choose exam duration");
             time_duration.SelectedIndex = 0;
-            examsList.ItemsSource =  HttpExamRepository.Instance.examList;
+
+            HttpClient httpClient = new HttpClient();
+            httpClient.BaseAddress = new Uri("https://localhost:7109/");
+            HttpResponseMessage response = await httpClient.GetAsync("api/Exams");
+            if (response != null)
+            {
+                string? examsString = await response.Content.ReadAsStringAsync();
+                HttpExamRepository.Instance.examList = JsonSerializer.Deserialize<List<Exam>>(examsString);
+                examsList.ItemsSource = HttpExamRepository.Instance.examList;
+            }
+            
+
         }
 
         //****************************************************************************************************
@@ -116,12 +129,6 @@ namespace Telhai.CS.FinalProject
         //****************************************************************************************************
 
 
-        public /* List<Exam> */ void allExams()
-        {
-            //  throw new NotImplementedException();
-        }
-        //****************************************************************************************************
-
         private void btnLoadPhoto_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
@@ -132,7 +139,7 @@ namespace Telhai.CS.FinalProject
            "Portable Network Graphic (*.png)|*.png";
             if (openFileDialog.ShowDialog() == true)
             {
-                try
+              /*  try
                 {
                     if(this.QuestionsLB.SelectedItem is Question q) 
                     {
@@ -142,7 +149,7 @@ namespace Telhai.CS.FinalProject
                 }catch(Exception ex)
                 {
                     MessageBox.Show(ex.Message);
-                }
+                }*/
 
                 //this.QuestionImage.Source = new BitmapImage(new Uri(openFileDialog.FileName));
             }
@@ -167,8 +174,9 @@ namespace Telhai.CS.FinalProject
         }
         //****************************************************************************************************
 
-        private void examsList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private async void examsList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+           
             if (this.examsList.SelectedItem is Exam ex)
             {
                 QuestionsLB.Items.Clear();
@@ -177,6 +185,8 @@ namespace Telhai.CS.FinalProject
                 this.txtTeacher.Text = ex.TeacherName;
                 this.exame_Datepicker.SelectedDate = ex.date;
                 this.time_begining.Text = ex.BeginTime.ToString("HH:mm");
+                this.AnswersListBox.Items.Clear();
+                this.IsRandomCB = ex.isRandom;
              //   this.isNew = false;
 
                 foreach (var question in ex.questions)
@@ -187,39 +197,48 @@ namespace Telhai.CS.FinalProject
         }
         //****************************************************************************************************
 
-        private void btn_RemoveExam_Click(object sender, RoutedEventArgs e)
+        private async void btn_RemoveExam_Click(object sender, RoutedEventArgs e)
         {
             if (examsList.SelectedItem != null)
             {
                 Exam exam = examsList.SelectedItem as Exam;
                 //Delete the exam from the detabase
+                HttpClient httpClient = new HttpClient();
+                httpClient.BaseAddress = new Uri("https://localhost:7109/");
+                HttpResponseMessage response = await httpClient.DeleteAsync("api/Exams/" + exam.examId);
 
-                var response = HttpExamRepository.Instance.RemoveExam(exam).Result;
+
                 if (response.IsSuccessStatusCode)
                 {
                     MessageBox.Show("The Exam: " + exam.examName + "was deleted successfuly");
-                    exams.Remove(exam);
+                    HttpExamRepository.Instance.examList.Remove(exam);
+                    examsList.Items.Refresh();
+
+                    
+
                     //SeachBTN_Click(sender, e);
                 }
                 else
-                    MessageBox.Show("Error");
+                {
+                    MessageBox.Show("Exam was not yet submitted");
+                }
             }
         }
 
-        private Exam GetExam()
-        {
-            return exam;
-        }
-
-        //****************************************************************************************************
+        
 
         private async void submit_Exam_Click(object sender, RoutedEventArgs e)
         {
+            Exam exam = new Exam();
             // List<Question> questions = new List<Question>();
-            foreach (var question in QuestionsLB.Items)
+
+            if (QuestionsLB.Items.Count != 0)
             {
-                Question q = question as Question;
-                exam.questions.Add(q);
+                foreach (var question in QuestionsLB.Items)
+                {
+                    Question q = question as Question;
+                    exam.questions.Add(q);
+                }
             }
             exam.date = (DateTime)exame_Datepicker.SelectedDate;
             exam.TeacherName = this.txtTeacher.Text;
@@ -234,39 +253,27 @@ namespace Telhai.CS.FinalProject
 
             
                 HttpClient httpClient = new HttpClient();
-                httpClient.BaseAddress = new Uri("https://localhost:8080/");
+                httpClient.BaseAddress = new Uri("https://localhost:7109/");
                 StringContent reqBody = new StringContent(JsonSerializer.Serialize(exam),Encoding.UTF8, "application/json");
-                HttpResponseMessage response = await httpClient.PostAsync("api/exams/add", reqBody);
+                HttpResponseMessage response = await httpClient.PostAsync("api/Exams", reqBody);
 
-                if (response.StatusCode == System.Net.HttpStatusCode.Created)
-                {
-                    MessageBox.Show($" Exam - {exam.examName} has been Created successfuly");
-                    Close();
-                }
-                else
-                {
-                    string returnValue = response.Content.ReadAsStringAsync().Result;
-                    MessageBox.Show($"Failed to POST data: ({response.StatusCode}): {returnValue}");
-                }
-            
-            /*else
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
-                HttpClient httpClient = new HttpClient();
-                httpClient.BaseAddress = new Uri("https://localhost:7252/");
-                StringContent reqBody = new StringContent(JsonSerializer.Serialize(exam), Encoding.UTF8, "application/json");
-                HttpResponseMessage response = await httpClient.PutAsync("api/exams/" +exam.examId, reqBody);
-
-                if (response.StatusCode == System.Net.HttpStatusCode.Created)
-                {
-                    MessageBox.Show($" Exam - {exam.examName} has been Created successfuly");
-                    Close();
-                }
-                else
-                {
-                    string returnValue = response.Content.ReadAsStringAsync().Result;
-                    MessageBox.Show($"Failed to POST data: ({response.StatusCode}): {returnValue}");
-                }
-            }*/
+                MessageBox.Show($" Exam - {exam.examName} has been Created successfuly");
+                Close();
+            }
+            else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            {
+                HttpClient httpClientPut = new HttpClient();
+                httpClientPut.BaseAddress = new Uri("https://localhost:7109/");
+                StringContent reqBody2 = new StringContent(JsonSerializer.Serialize(exam), Encoding.UTF8, "application/json");
+                HttpResponseMessage responsePut = await httpClientPut.PutAsync("api/Exams/update/"+exam.examId, reqBody2);
+                if(responsePut.StatusCode == System.Net.HttpStatusCode.OK)
+                        { 
+                            MessageBox.Show($"Exam - {exam.examName} has been Updated successfuly");
+                        }
+            }
+           
         }
         //****************************************************************************************************
 
@@ -289,11 +296,11 @@ namespace Telhai.CS.FinalProject
                 Question selectedQ = QuestionsLB.SelectedItem as Question;
 
                 textQuestion.Text = selectedQ.content;
-                if (selectedQ.QImage != null)
+                /*if (selectedQ.QImage != null)
                 {
                     this.QuestionImage.Source = (ImageSource)new ImageSourceConverter().ConvertFrom(selectedQ.QImage);
                 }
-
+*/
                 AnswersListBox.Items.Clear();
                 //int idxAns = 0;
 
@@ -325,6 +332,23 @@ namespace Telhai.CS.FinalProject
         }
 
         private void time_duration_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
+
+        private void btn_RemoveQuestion_Click(object sender, RoutedEventArgs e)
+        {
+            QuestionsLB.Items.Remove(QuestionsLB.SelectedItem);
+            QuestionsLB.Items.Refresh();
+        }
+
+        private void btn_RemoveAnswer_Click(object sender, RoutedEventArgs e)
+        {
+            AnswersListBox.Items.Remove(AnswersListBox.SelectedItem);
+            QuestionsLB.Items.Refresh();
+        }
+
+        private void txtExame_TextChanged(object sender, TextChangedEventArgs e)
         {
 
         }

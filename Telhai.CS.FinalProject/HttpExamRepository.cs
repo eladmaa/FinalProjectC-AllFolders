@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Telhai.CS.FinalProject;
 using Newtonsoft.Json;
 using JsonSerializer = System.Text.Json.JsonSerializer;
+using System.Windows;
 
 namespace Telhai.CS.APIServer.Models
 {
@@ -37,7 +38,7 @@ namespace Telhai.CS.APIServer.Models
         //****************************************************************************************************
         public async Task<List<Exam>> GetAllExamsAsync()
         {
-            HttpResponseMessage response = await clientApi.GetAsync("api/exams");
+            HttpResponseMessage response = await clientApi.GetAsync("api/Exams");
             if (response != null)
             {
                 response.EnsureSuccessStatusCode();
@@ -56,7 +57,11 @@ namespace Telhai.CS.APIServer.Models
         {
 
             //var options = new JsonSerializerOptions { WriteIndented = true };
-            examList.Add(exam);
+            if(examList.FindIndex(e => e.examId == exam.examId) < 0)
+            {
+               // MessageBox.Show("added to repo");
+                 examList.Add(exam);
+            }
             /*string jsonExamString = JsonSerializer.Serialize<Exam>(exam);
 
             var content = new StringContent(jsonExamString, Encoding.UTF8, "application/json");

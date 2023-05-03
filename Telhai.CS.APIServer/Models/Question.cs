@@ -4,8 +4,8 @@ namespace Telhai.CS.APIServer.Models
 {
     public class Question
     {
-        [JsonPropertyName("QImage")]
-        public byte[] QImage { get; set; }
+       // [JsonPropertyName("QImage")]
+     //   public byte[] QImage { get; set; }
 
         [JsonPropertyName("content")]
 

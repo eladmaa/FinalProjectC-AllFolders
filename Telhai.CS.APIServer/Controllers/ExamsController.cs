@@ -72,33 +72,59 @@ namespace Telhai.CS.APIServer.Controllers
 
         // PUT: api/Exams1/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutExam(string id, Exam exam)
+        [HttpPut("update/{id}")]
+        public  void PutExam(string id, [FromBody] Exam exam)
         {
+
             var client = new MongoClient(serverConnectionString);
             var database = client.GetDatabase(dbName);
             var collection = database.GetCollection<Exam>(eCollName);
-            var update = Builders<Exam>.Update.Set("examName", exam);
 
-            collection.UpdateOne(x => x.examId == id, update);
+            Exam ex = collection.FindOneAndDelete(x => x.examId == id); // finding and deleteing the requested exam
+            if (ex == null)
+                return;
+            
 
-            return NoContent();
+            ex.date =exam.date;
+            ex.TeacherName = exam.TeacherName;
+            ex.examName = exam.examName;
+            ex.BeginTime = exam.BeginTime;
+            ex.duration = exam.duration;
+            ex.isRandom = exam.isRandom;
+            ex.examId = exam.examId;
+
+            collection.InsertOne(exam);
+            /* var client = new MongoClient(serverConnectionString);
+             var database = client.GetDatabase(dbName);
+             var collection = database.GetCollection<Exam>(eCollName);
+             var update = Builders<Exam>.Update.Set("examName", exam);*/
+
+            // return collection.UpdateOne(x => x.examId == id, update);
+
         }
 
         // POST: api/Exams1
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost("add")]
+        [HttpPost]
         public async Task<ActionResult<Exam>> PostExam(Exam exam)
         {
             var client = new MongoClient(serverConnectionString);
             var database = client.GetDatabase(dbName);
             var collection = database.GetCollection<Exam>(eCollName);
-
-            collection.InsertOne(exam);
             
-
-            return Ok(collection);
-          //  return CreatedAtAction("GetExam", new { id = exam.id }, exam);
+            var filter = Builders<Exam>.Filter.Eq("examId", exam.examId);
+            Exam? search = collection.Find(filter).FirstOrDefault();
+            if (search == null)
+            {
+                collection.InsertOne(exam);
+                return Ok(collection);
+            }
+               
+            else
+            {
+                return BadRequest();
+            }
+            
         }
 
         // DELETE: api/Exams1/5

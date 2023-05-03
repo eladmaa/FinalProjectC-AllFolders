@@ -4,18 +4,24 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Telhai.CS.FinalProject"
-        mc:Ignorable="d"
+        mc:Ignorable="d" Loaded="Window_Loaded_1"
         Title="StudentEntrance" Height="450" Width="800">
-    <Grid Margin="120, 120, 120, 120">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="2*"/>
-            <RowDefinition Height="2*"/>
-            <RowDefinition Height="1*"/>
-        </Grid.RowDefinitions>
-        <Label Grid.Row="0" Background="AliceBlue" FontSize="22" Name="lbl_welcome" Content="Please enter exam name"/>
-        <TextBox Grid.Row="1" Name="ExamName" Text="exam name" FontStyle="Italic" FontSize="20"/>
-        <Button Grid.Row="2" Name="btn_ok" Content="find exam" FontSize="20" Width="90" Height="39"  Grid.RowSpan="2" VerticalAlignment="Stretch" Click="btn_ok_Click"/>
-
-
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="3*"/>
+        </Grid.ColumnDefinitions>
+        <Grid Name="examsGrid" Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+            <Label Grid.Row="0" Name="ExamsLB" Content="Choose Exam" Background="AliceBlue"></Label>
+            <ListBox Grid.Row="1" Name="examsList"  SelectionChanged="examsList_SelectionChanged" Margin="-10,20,10,0" Grid.RowSpan="2"/>
+            <Button Grid.Row="2" Name="btn_takeExam" Background="green" Content="Take Exam" Click="btn_TakeExam_Click"></Button>
+          
+        </Grid>
+        
     </Grid>
 </Window>
