@@ -57,8 +57,8 @@ namespace Telhai.CS.FinalProject
       //  bool isNew = false;
         
         //private List<Exam> exams = new List<Exam>();
-        private ObservableCollection<Question> questionsList = new ObservableCollection<Question>();
-        private ObservableCollection<String> answersList = new ObservableCollection<String>();
+        //private ObservableCollection<Question> questionsList = new ObservableCollection<Question>();
+        //private ObservableCollection<String> answersList = new ObservableCollection<String>();
         public TeacherWindow()
         {
             InitializeComponent();
@@ -74,6 +74,7 @@ namespace Telhai.CS.FinalProject
         {
             id++;
             string idCounter = id.ToString();
+            exame_Datepicker.SelectedDate = DateTime.Now;
             Exam exam = new Exam() {examName = "Name_" + idCounter };
             await HttpExamRepository.Instance.AddExamAsync(exam);
             //Reload
@@ -180,13 +181,15 @@ namespace Telhai.CS.FinalProject
             if (this.examsList.SelectedItem is Exam ex)
             {
                 QuestionsLB.Items.Clear();
-                this.txtExame.Text = ex.examName;
+                this.txtExameName.Text = ex.examName;
                 this.txtID.Text = ex.examId;
                 this.txtTeacher.Text = ex.TeacherName;
                 this.exame_Datepicker.SelectedDate = ex.date;
                 this.time_begining.Text = ex.BeginTime.ToString("HH:mm");
                 this.AnswersListBox.Items.Clear();
-                this.IsRandomCB = ex.isRandom;
+                this.IsRandomCB.IsChecked = ex.isRandom;
+                this.time_duration.SelectedItem = ex.duration;
+                
              //   this.isNew = false;
 
                 foreach (var question in ex.questions)
@@ -242,13 +245,13 @@ namespace Telhai.CS.FinalProject
             }
             exam.date = (DateTime)exame_Datepicker.SelectedDate;
             exam.TeacherName = this.txtTeacher.Text;
-            exam.examName = this.txtExame.Text;
+            exam.examName = this.txtExameName.Text;
             DateTime tempExamBeginTime = exame_Datepicker.SelectedDate.Value;
             setTime(ref tempExamBeginTime, this.time_begining.Text);
 
             exam.BeginTime = DateTime.Parse(time_begining.Text);
             exam.duration = this.time_duration.SelectedIndex;
-            exam.isRandom = this.IsRandomCB.IsChecked.Value;
+            exam.isRandom = this.IsRandomCB.IsPressed;
             exam.examId = this.txtID.Text;
 
             
@@ -318,10 +321,6 @@ namespace Telhai.CS.FinalProject
             }
         }
 
-        private void time_begining_TextChanged_1(object sender, TextChangedEventArgs e)
-        {
-
-        }
 
         private void btn_AddQuestion_Click(object sender, RoutedEventArgs e)
         {
@@ -333,26 +332,55 @@ namespace Telhai.CS.FinalProject
 
         private void time_duration_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-
+          /*  if (this.examsList.SelectedItem is Exam ex)
+            {
+                ex.duration = this.time_duration.SelectedIndex;
+            }*/
         }
 
+        //************************************************************************************************************************
         private void btn_RemoveQuestion_Click(object sender, RoutedEventArgs e)
         {
             QuestionsLB.Items.Remove(QuestionsLB.SelectedItem);
             QuestionsLB.Items.Refresh();
         }
-
+        //************************************************************************************************************************
         private void btn_RemoveAnswer_Click(object sender, RoutedEventArgs e)
         {
             AnswersListBox.Items.Remove(AnswersListBox.SelectedItem);
             QuestionsLB.Items.Refresh();
         }
-
-        private void txtExame_TextChanged(object sender, TextChangedEventArgs e)
+        //************************************************************************************************************************
+        private void txtExameName_TextChanged(object sender, TextChangedEventArgs e)
         {
-
+            if (this.examsList.SelectedItem is Exam ex)
+            {
+                ex.examName = this.txtExameName.Text;
+            }
         }
-
+        //************************************************************************************************************************
+        private void IsRandomCB_Checked(object sender, RoutedEventArgs e)
+        {
+            if (this.examsList.SelectedItem is Exam ex)
+            {
+                ex.isRandom = this.IsRandomCB.IsPressed;
+            }
+        }
+        //************************************************************************************************************************
+        private void time_begining_TextChanged_1(object sender, TextChangedEventArgs e)
+        {
+            if (this.examsList.SelectedItem is Exam ex)
+            {
+                if (!IsTimeValid(time_begining.Text))
+                {
+                    MessageBox.Show("Exam's begining time needs to be in HH:MM format and valid");
+                    return;
+                }
+                DateTime time = exame_Datepicker.SelectedDate.Value;
+               // setTime(ref time, exame_Datepicker.Text);
+                //   ex.BeginTime = this.time_begining.Text;
+            }
+        }
         //****************************************************************************************************
 
     }

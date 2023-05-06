@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
@@ -22,17 +23,23 @@ namespace Telhai.CS.FinalProject
     /// </summary>
     public partial class StudentEntrance : Window
     {
+         List<Exam> exams;
+        HttpClient httpClient;
+         public ObservableCollection<Exam> examsObs  = new ObservableCollection<Exam>();
         public StudentEntrance()
         {
             InitializeComponent();
             this.Loaded += Window_Loaded_1;
             examsList.ItemsSource = HttpExamRepository.Instance.examList;
+            exams = new List<Exam>();
+            exams = HttpExamRepository.Instance.examList;
         }
+
 
         
         private async void Window_Loaded_1(object sender, RoutedEventArgs e)
         {
-            HttpClient httpClient = new HttpClient();
+            httpClient = new HttpClient();
             httpClient.BaseAddress = new Uri("https://localhost:7109/");
             HttpResponseMessage response = await httpClient.GetAsync("api/Exams");
             if (response != null)
@@ -40,6 +47,7 @@ namespace Telhai.CS.FinalProject
                 string? examsString = await response.Content.ReadAsStringAsync();
                 HttpExamRepository.Instance.examList = JsonSerializer.Deserialize<List<Exam>>(examsString);
                 examsList.ItemsSource = HttpExamRepository.Instance.examList;
+                
             }
         }
 
@@ -49,13 +57,42 @@ namespace Telhai.CS.FinalProject
         {
             if (this.examsList.SelectedItem is Exam ex)
             {
-                Test test = new Test();
+                Test test = new Test(ex);
+                test.ShowDialog();
             }
         }
 
-        private void examsList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private async void SearchBTN_Click(object sender, RoutedEventArgs e)
         {
+           // HttpExamRepository.Instance.examList.Clear();
+            examsList.Items.Refresh();
+            HttpResponseMessage response = await httpClient.GetAsync("api/Exams");
+            if (response != null)
+            {
+                string? examsString = await response.Content.ReadAsStringAsync();
+                HttpExamRepository.Instance.examList = JsonSerializer.Deserialize<List<Exam>>(examsString);
+            //    examsList.ItemsSource = HttpExamRepository.Instance.examList;
+            }
 
+            if (searchTB.Text == "")
+            {
+                foreach (Exam exam in exams)
+                {
+                    examsList.Items.Add(exam);
+                }
+            }
+            else
+            {
+                foreach (Exam exam in exams)
+                {
+                    if (exam.examName.StartsWith(searchTB.Text))
+                    {
+                        HttpExamRepository.Instance.examList.Clear();
+                        examsList.Items.Add(exam);
+                        examsList.Items.Refresh();
+                    }
+                }
+            }
         }
     }
 }

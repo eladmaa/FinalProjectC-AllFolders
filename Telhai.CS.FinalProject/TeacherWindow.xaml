@@ -38,7 +38,7 @@
                     <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
                 <Label FontSize="16" Grid.Row="0" Grid.Column="0" Name="lbl_ExamName" Content="Exam Name"/>
-                <TextBox Background="AliceBlue" Name="txtExame" Grid.Row="0" Grid.Column="1" TextChanged="txtExame_TextChanged"/>
+                <TextBox Background="AliceBlue" Name="txtExameName" Grid.Row="0" Grid.Column="1" TextChanged="txtExameName_TextChanged"/>
                 <StackPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Horizontal">
                     <Label FontSize="16"  Name="lblId" Content="Exam ID" Width="120"/>
                     <TextBox Background="AliceBlue" Name="txtID"  Width="160" />
@@ -57,7 +57,7 @@
                     <Label FontSize="16" Name="Duration" Content="duration"/>
                     <ComboBox Background="AliceBlue" Name="time_duration"   Width="auto" SelectionChanged="time_duration_SelectionChanged" />
                     <Label FontSize="16" Name="lbl_random" Content="random apearance?"/>
-                    <CheckBox x:Name="IsRandomCB" Content="" />
+                    <CheckBox x:Name="IsRandomCB" Content="" Checked="IsRandomCB_Checked" />
 
                 </StackPanel>
 
@@ -85,15 +85,11 @@
                     <Grid.RowDefinitions>
                         <RowDefinition Name="header" Height ="auto"/>
                         <RowDefinition Name="QuestionText" Height ="auto"/>
-                        <RowDefinition Name="images" Height="10*"/>
                         <RowDefinition Name="AnswersList" Height="79*"/>
                     </Grid.RowDefinitions>
                     <Label Grid.Row="0" Name="question_desc" Content="Question area" HorizontalAlignment="Center" Margin="0,0,0,16" Grid.RowSpan="2"/>
                     <TextBox Grid.Row="1" x:Name="textQuestion" TextWrapping="Wrap" Text="write your question here" Margin="0,0,0,30" Grid.RowSpan="2"/>
-                    <DockPanel Grid.Row="2" Margin="0,0,0,237" Grid.RowSpan="2" Height="25">
-                        <Button Name="btnLoadPhoto" Width="78" Content="choose image" Click="btnLoadPhoto_Click"/>
-                        <TextBox Name="Path" HorizontalAlignment="Stretch" />
-                    </DockPanel>
+                   
                     <Grid Name="AnswersColumn" Grid.Row="3" >
 
                         <Grid.ColumnDefinitions>

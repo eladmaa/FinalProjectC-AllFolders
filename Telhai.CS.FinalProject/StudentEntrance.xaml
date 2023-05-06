@@ -18,9 +18,24 @@
                 <RowDefinition Height="auto"/>
             </Grid.RowDefinitions>
             <Label Grid.Row="0" Name="ExamsLB" Content="Choose Exam" Background="AliceBlue"></Label>
-            <ListBox Grid.Row="1" Name="examsList"  SelectionChanged="examsList_SelectionChanged" Margin="-10,20,10,0" Grid.RowSpan="2"/>
+            <ListBox Grid.Row="1" Name="examsList"   Grid.RowSpan="2"/>
             <Button Grid.Row="2" Name="btn_takeExam" Background="green" Content="Take Exam" Click="btn_TakeExam_Click"></Button>
           
+        </Grid>
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Label Name="SearchExam" Content="Exams System"  FontSize="15" Background="LightBlue" Grid.Row="0" />
+            <DockPanel Grid.Row="1">
+                <Label Name="searchLBL" Content="Search exam:" HorizontalAlignment="Left" Margin="30,0,0,0" VerticalAlignment="Center" FontSize="20" Height="36" Width="126"/>
+                <TextBox Name="searchTB"  TextWrapping="Wrap" Margin="0,0,20,0" Text="" VerticalAlignment="Center" Width="350" Height="25" />
+                <Button x:Name="SearchBTN" Content="Search"   Width="60" Height="25" Click="SearchBTN_Click" />
+            </DockPanel>
+            
+
         </Grid>
         
     </Grid>

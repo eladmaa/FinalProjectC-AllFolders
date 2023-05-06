@@ -41,7 +41,6 @@
                     <TextBox Background="AliceBlue" Name="time_begining" Width="160"/>
 
                     <Label FontSize="16" Name="Duration" Content="duration"/>
-                    <ComboBox Background="AliceBlue" Name="time_duration"   Width="auto"/>
                    
                 </StackPanel>
 

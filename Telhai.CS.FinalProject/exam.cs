@@ -58,6 +58,12 @@ namespace Telhai.CS.FinalProject
             this.isRandom = isRandom;
             this.questions = questions;
         }
+
+        public override string ToString()
+        {
+            // choose any format that suits you and display what you like
+            return String.Format("{0}", this.examName);
+        }
     }
 
     

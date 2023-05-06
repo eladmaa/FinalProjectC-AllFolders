@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -11,6 +12,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using ZstdSharp.Unsafe;
 
 namespace Telhai.CS.FinalProject
 {
@@ -19,11 +21,15 @@ namespace Telhai.CS.FinalProject
     /// </summary>
     public partial class Test : Window
     {
-        public Test()
+        Exam exam;
+        public Test(Exam ex)
         {
             InitializeComponent();
+            this.exam = new Exam();
+            this.exam = ex;
         }
 
+        
         private void submit_Exam_Click(object sender, RoutedEventArgs e)
         {
 

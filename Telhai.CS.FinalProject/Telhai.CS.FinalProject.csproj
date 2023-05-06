@@ -181,9 +181,6 @@
     </ApplicationDefinition>
     <Compile Include="Exam.cs" />
     <Compile Include="ExamRepository.cs" />
-    <Compile Include="ExamWindow.xaml.cs">
-      <DependentUpon>ExamWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="HttpExamRepository.cs" />
     <Compile Include="IExamRepository.cs" />
     <Compile Include="Question.cs" />
@@ -196,10 +193,6 @@
     <Compile Include="Test.xaml.cs">
       <DependentUpon>Test.xaml</DependentUpon>
     </Compile>
-    <Page Include="ExamWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
