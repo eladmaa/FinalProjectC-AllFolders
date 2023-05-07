@@ -24,24 +24,19 @@
                     <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
                 <Label FontSize="16" Grid.Row="0" Grid.Column="0" Name="lbl_ExamName" Content="Exam Name"/>
-                <TextBox Background="AliceBlue" Name="txtExame" Grid.Row="0" Grid.Column="1"/>
+                <TextBox Background="AliceBlue" Name="txtExamName" Grid.Row="0" Grid.Column="1" TextChanged="txtExame_TextChanged"/>
                 <StackPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Horizontal">
                     <Label FontSize="16"  Name="lblId" Content="Exam ID" Width="120"/>
                     <TextBox Background="AliceBlue" Name="txtID"  Width="160" />
-
-                    <Label FontSize="16" Name="lblDate" Content="Exame Date"/>
-                    <DatePicker Background="AliceBlue" Name="exame_Datepicker"   Width="224"/>
                 </StackPanel>
 
                 <Label Name="lbl_TeacherName" Grid.Row="2" Grid.Column="0" Content="Teacher Name" FontSize="16"/>
                 <TextBox Background="AliceBlue" Name="txtTeacher" Grid.Row="2" Grid.Column="1" />
 
                 <StackPanel Grid.Row="3" Grid.ColumnSpan="3" Orientation="Horizontal">
-                    <Label FontSize="16"  Name="lblBegin_time" Content="Begin time" Width="120"/>
+                    <Label FontSize="16"  Name="lblBegin_time" Content="Begin date and time" Width="auto"/>
                     <TextBox Background="AliceBlue" Name="time_begining" Width="160"/>
 
-                    <Label FontSize="16" Name="Duration" Content="duration"/>
-                   
                 </StackPanel>
 
             </Grid>
@@ -100,7 +95,7 @@
                             <DockPanel>
                                 <Label Name="Choose_Answer" Content="answer" Grid.Column="0"/>
                                 <TextBox Text="choose correct answer"/>
-                                <ComboBox Name="Correct_answer" />
+                                <ComboBox Name="Correct_answer" SelectionChanged="Correct_answer_SelectionChanged" />
                             </DockPanel>
                             <ListBox Name="AnswersListBox" Grid.Row="1" Grid.Column="0"/>
                         </Grid>

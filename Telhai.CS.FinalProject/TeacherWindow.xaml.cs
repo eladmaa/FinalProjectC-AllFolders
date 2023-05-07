@@ -67,6 +67,12 @@ namespace Telhai.CS.FinalProject
 //            this.QuestionsLB.ItemsSource = questionsList;
             exame_Datepicker.SelectedDate = DateTime.Now;
             time_begining.Text = DateTime.Now.ToString("HH:mm");
+            for (float i = MIN_TEST_DURATION; i <= MAX_TEST_DURATION; i += 0.5f)
+            {
+                time_duration.Items.Add(i.ToString());
+            }
+            time_duration.Items.Insert(0, "Choose exam duration");
+            time_duration.SelectedIndex = 0;
         }
         //****************************************************************************************************
 
@@ -88,12 +94,7 @@ namespace Telhai.CS.FinalProject
 
         private async void Window_Loaded_1(object sender, RoutedEventArgs e)
         {
-            for (float i = MIN_TEST_DURATION; i <= MAX_TEST_DURATION; i += 0.5f)
-            {
-                time_duration.Items.Add(i.ToString());
-            }
-            time_duration.Items.Insert(0, "Choose exam duration");
-            time_duration.SelectedIndex = 0;
+            
 
             HttpClient httpClient = new HttpClient();
             httpClient.BaseAddress = new Uri("https://localhost:7109/");
@@ -103,6 +104,7 @@ namespace Telhai.CS.FinalProject
                 string? examsString = await response.Content.ReadAsStringAsync();
                 HttpExamRepository.Instance.examList = JsonSerializer.Deserialize<List<Exam>>(examsString);
                 examsList.ItemsSource = HttpExamRepository.Instance.examList;
+
             }
             
 
@@ -112,19 +114,26 @@ namespace Telhai.CS.FinalProject
 
         private void AddAnswer_btn_Click(object sender, RoutedEventArgs e)
         {
-            string newAnswer = Interaction.InputBox("Enter new answer:", "New Answer", "", 0, 0);
-            if (newAnswer != "")
-            {
-                /*Question question = questionsLB.SelectedItem as Question;
-                question.AllA.Add(input);
-                answersSP.Items.Add(input);
-                answersSP.SelectedItem = input;*/
+           
+                if(QuestionsLB.SelectedItem is Question q)
+                {
+                    string newAnswer = Interaction.InputBox("Enter new answer:", "New Answer", "", 0, 0);
+                    if (newAnswer != "")
+                    {
+                       
+                        q.answers.Add(newAnswer);
+                        AnswersListBox.Items.Add(newAnswer);
+                        AnswersListBox.SelectedItem = newAnswer;
 
-                Question question = QuestionsLB.SelectedItem as Question;
-                question.answers.Add(newAnswer);
-                AnswersListBox.Items.Add(newAnswer);
-                AnswersListBox.SelectedItem = newAnswer;
+                        this.Correct_answer.Items.Add(newAnswer);
+
+                }
+
+                
+                
+
             }
+            
 
         }
         //****************************************************************************************************
@@ -180,6 +189,7 @@ namespace Telhai.CS.FinalProject
            
             if (this.examsList.SelectedItem is Exam ex)
             {
+             
                 QuestionsLB.Items.Clear();
                 this.txtExameName.Text = ex.examName;
                 this.txtID.Text = ex.examId;
@@ -187,8 +197,15 @@ namespace Telhai.CS.FinalProject
                 this.exame_Datepicker.SelectedDate = ex.date;
                 this.time_begining.Text = ex.BeginTime.ToString("HH:mm");
                 this.AnswersListBox.Items.Clear();
+                if(QuestionsLB.SelectedItem is Question q)
+                {
+                    foreach(string ans in q.answers)
+                    {
+                        this.AnswersListBox.Items.Add(ans);
+                    }
+                }
                 this.IsRandomCB.IsChecked = ex.isRandom;
-                this.time_duration.SelectedItem = ex.duration;
+                this.time_duration.SelectedIndex = (int)(ex.duration*2 -1);
                 
              //   this.isNew = false;
 
@@ -250,9 +267,10 @@ namespace Telhai.CS.FinalProject
             setTime(ref tempExamBeginTime, this.time_begining.Text);
 
             exam.BeginTime = DateTime.Parse(time_begining.Text);
-            exam.duration = this.time_duration.SelectedIndex;
+            exam.duration = float.Parse(this.time_duration.SelectedValue.ToString(), CultureInfo.InvariantCulture);
             exam.isRandom = this.IsRandomCB.IsPressed;
             exam.examId = this.txtID.Text;
+            
 
             
                 HttpClient httpClient = new HttpClient();
@@ -294,6 +312,7 @@ namespace Telhai.CS.FinalProject
 
         private void QuestionsLB_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+          //  this.Correct_answer.Items.Clear();
             if (QuestionsLB.SelectedItem != null)
             {
                 Question selectedQ = QuestionsLB.SelectedItem as Question;
@@ -305,19 +324,16 @@ namespace Telhai.CS.FinalProject
                 }
 */
                 AnswersListBox.Items.Clear();
-                //int idxAns = 0;
+                int temp = selectedQ.correct;
+                this.Correct_answer.Items.Clear();
 
                 foreach (var answer in selectedQ.answers)
                 {
                     AnswersListBox.Items.Add(answer);
-                    /*if (answer == selectedQ.A)
-                    {
-                        AnswersListBox.SelectedIndex = idxAns;
-                    }
-                    idxAns++;*/
+                    this.Correct_answer.Items.Add(answer);
+                                       
                 }
-                this.Correct_answer.SelectedValue = selectedQ.correct;
-
+                this.Correct_answer.SelectedIndex = temp;
             }
         }
 
@@ -328,27 +344,57 @@ namespace Telhai.CS.FinalProject
             Question question = new Question();
             QuestionsLB.Items.Add(question);
             QuestionsLB.SelectedIndex = numberOfQuestion;
+
+            if(examsList.SelectedItem is Exam ex)
+            {
+                ex.questions.Add(question);
+                for (int i = 0; i < ex.questions.Count; i++)
+                    {
+                        ex.questions[i].index = i+1;
+                    
+                    }
+            }
+           
+            
         }
 
         private void time_duration_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-          /*  if (this.examsList.SelectedItem is Exam ex)
+            if ((this.examsList.SelectedItem is Exam ex) && (this.time_duration.SelectedIndex >0))
             {
-                ex.duration = this.time_duration.SelectedIndex;
-            }*/
+                ex.duration = float.Parse( this.time_duration.SelectedValue.ToString(), CultureInfo.InvariantCulture);
+            }
         }
 
         //************************************************************************************************************************
         private void btn_RemoveQuestion_Click(object sender, RoutedEventArgs e)
         {
+            Question question = new Question();
+            question = QuestionsLB.SelectedItem as Question;
             QuestionsLB.Items.Remove(QuestionsLB.SelectedItem);
             QuestionsLB.Items.Refresh();
+
+            if (examsList.SelectedItem is Exam ex)
+            {
+                ex.questions.Remove(question);
+                for (int i = 0; i < ex.questions.Count; i++)
+                {
+                    ex.questions[i].index = i+1;
+                    this.Correct_answer.Items.Add(ex.questions[i]);
+                }
+            }
         }
         //************************************************************************************************************************
         private void btn_RemoveAnswer_Click(object sender, RoutedEventArgs e)
         {
             AnswersListBox.Items.Remove(AnswersListBox.SelectedItem);
-            QuestionsLB.Items.Refresh();
+            AnswersListBox.Items.Refresh();
+
+            this.Correct_answer.Items.Clear();
+            for (int i = 0; i < this.AnswersListBox.Items.Count; i++)
+            {
+                this.Correct_answer.Items.Add(AnswersListBox.Items[i]);
+            }
         }
         //************************************************************************************************************************
         private void txtExameName_TextChanged(object sender, TextChangedEventArgs e)
@@ -380,6 +426,30 @@ namespace Telhai.CS.FinalProject
                // setTime(ref time, exame_Datepicker.Text);
                 //   ex.BeginTime = this.time_begining.Text;
             }
+        }
+
+        private void textQuestion_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if(QuestionsLB.SelectedItem is Question question)
+            {
+                question.content = this.textQuestion.Text;
+            }
+        }
+
+        private void txtTeacher_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (this.examsList.SelectedItem is Exam ex)
+            {
+                ex.TeacherName = this.txtTeacher.Text;
+            }
+        }
+
+        private void Correct_answer_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+            Question selectedQ = QuestionsLB.SelectedItem as Question;
+            selectedQ.correct = this.Correct_answer.SelectedIndex;
+                
         }
         //****************************************************************************************************
 

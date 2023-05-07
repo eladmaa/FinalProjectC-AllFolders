@@ -24,6 +24,7 @@ namespace Telhai.CS.APIServer.Controllers
         public static readonly string serverConnectionString = "mongodb://localhost:27017";
         public static readonly string dbName = "server-client";
         public static readonly string eCollName = "exams";
+        public static readonly string tCollName = "answers";
 
         //private ExamDbContext _context;
 
@@ -73,7 +74,7 @@ namespace Telhai.CS.APIServer.Controllers
         // PUT: api/Exams1/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("update/{id}")]
-        public  void PutExam(string id, [FromBody] Exam exam)
+        public  void PutExam(string id, Exam exam)
         {
 
             var client = new MongoClient(serverConnectionString);
@@ -92,6 +93,7 @@ namespace Telhai.CS.APIServer.Controllers
             ex.duration = exam.duration;
             ex.isRandom = exam.isRandom;
             ex.examId = exam.examId;
+            ex.questions = exam.questions;
 
             collection.InsertOne(exam);
             /* var client = new MongoClient(serverConnectionString);
@@ -127,6 +129,27 @@ namespace Telhai.CS.APIServer.Controllers
             
         }
 
+        [HttpPost("answers/{id}")]
+        public async Task<ActionResult<Exam>> PostExam(int studentID, Exam exam)
+        {
+            var client = new MongoClient(serverConnectionString);
+            var database = client.GetDatabase(dbName);
+            var collection = database.GetCollection<Exam>(tCollName);
+
+            var filter = Builders<Exam>.Filter.Eq("examId", exam.examId);
+            Exam? search = collection.Find(filter).FirstOrDefault();
+            if (search == null)
+            {
+                collection.InsertOne(exam);
+                return Ok(collection);
+            }
+
+            else
+            {
+                return BadRequest();
+            }
+
+        }
         // DELETE: api/Exams1/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteExam(string id)

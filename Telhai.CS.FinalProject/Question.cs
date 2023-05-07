@@ -10,6 +10,9 @@ namespace Telhai.CS.FinalProject
 {
     public class Question
     {
+        [JsonPropertyName("index")]
+        public int index { get; set; }
+
         [JsonPropertyName("content")]
 
         public string content { get; set; }
@@ -18,7 +21,7 @@ namespace Telhai.CS.FinalProject
         public int correct { get; set; }
         [JsonPropertyName("answers")]
 
-        public List<string> answers;
+        public List<string> answers { get; set; }
         [JsonPropertyName("_id")]
 
         public Guid _id;
@@ -42,6 +45,12 @@ namespace Telhai.CS.FinalProject
         public int answersCount()
         {
             return answers.Count;
+        }
+
+        public override string ToString()
+        {
+            // choose any format that suits you and display what you like
+            return String.Format("question no. {0}", this.index);
         }
     }
 

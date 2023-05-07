@@ -48,7 +48,7 @@
                 </StackPanel>
 
                 <Label Name="lbl_TeacherName" Grid.Row="2" Grid.Column="0" Content="Teacher Name" FontSize="16"/>
-                <TextBox Background="AliceBlue" Name="txtTeacher" Grid.Row="2" Grid.Column="1" />
+                <TextBox Background="AliceBlue" Name="txtTeacher" Grid.Row="2" Grid.Column="1" TextChanged="txtTeacher_TextChanged" />
 
                 <StackPanel Grid.Row="3" Grid.ColumnSpan="3" Orientation="Horizontal">
                     <Label FontSize="16"  Name="lblBegin_time" Content="Begin time" Width="120"/>
@@ -88,7 +88,7 @@
                         <RowDefinition Name="AnswersList" Height="79*"/>
                     </Grid.RowDefinitions>
                     <Label Grid.Row="0" Name="question_desc" Content="Question area" HorizontalAlignment="Center" Margin="0,0,0,16" Grid.RowSpan="2"/>
-                    <TextBox Grid.Row="1" x:Name="textQuestion" TextWrapping="Wrap" Text="write your question here" Margin="0,0,0,30" Grid.RowSpan="2"/>
+                    <TextBox Grid.Row="1" x:Name="textQuestion" TextWrapping="Wrap" Text="write your question here" Margin="0,0,0,30" Grid.RowSpan="2" TextChanged="textQuestion_TextChanged"/>
                    
                     <Grid Name="AnswersColumn" Grid.Row="3" >
 
@@ -114,9 +114,9 @@
                                 <RowDefinition x:Name="RemoveAnswer" Height="auto"/>
                             </Grid.RowDefinitions>
                             <DockPanel>
-                                <Button Name="AddAnswer_btn" Content="Add answer" Click="AddAnswer_btn_Click" Grid.Column="0"/>
+                                <Button Name="AddAnswer_btn" Content="Add answer" Click="AddAnswer_btn_Click" Grid.Column="0" Width="66"/>
                                 <TextBox Text="choose correct answer"/>
-                                <ComboBox Name="Correct_answer" />
+                                <ComboBox Name="Correct_answer" Width="79" SelectionChanged="Correct_answer_SelectionChanged" />
                             </DockPanel>
                             <ListBox Name="AnswersListBox" Grid.Row="1" Grid.Column="0"/>
                             <Button Name="btn_RemoveAnswer" Content="Remove Answer" Grid.Row="2" Click="btn_RemoveAnswer_Click"/>
