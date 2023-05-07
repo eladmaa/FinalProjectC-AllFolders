@@ -62,7 +62,7 @@ namespace Telhai.CS.FinalProject
         public TeacherWindow()
         {
             InitializeComponent();
-            this.Loaded += Window_Loaded_1;
+          //  this.Loaded += Window_Loaded_1;
             examsList.ItemsSource = HttpExamRepository.Instance.examList;
 //            this.QuestionsLB.ItemsSource = questionsList;
             exame_Datepicker.SelectedDate = DateTime.Now;
